@@ -99,12 +99,28 @@ public class ExpressionTree280 extends LinkedSimpleTree280<String> {
 	}
 	
 	public String toPrefixExpression(){
-		String output ="";
-		
-		return output;
+		String output = "";
+		if (rootNode == null){
+			return "";
+		}
+		else{
+			
+			output = output + rootNode.toString();
+			
+			if (!rootLeftSubtree().isEmpty()){
+				ExpressionTree280 left = (ExpressionTree280) rootLeftSubtree();
+				output = output + left.toPostfixExpression();
+			}
+			
+			if (!rootRightSubtree().isEmpty()){
+				ExpressionTree280 right = (ExpressionTree280) rootRightSubtree();
+				output = output + right.toPostfixExpression();
+			}
+		}
+		return output;	
 	}
 	
-	// TODO wtf is going on with this godamn recursion. / test git
+
 	public String toPostfixExpression(){
 		String output = "";
 		if (rootNode == null){
@@ -113,17 +129,14 @@ public class ExpressionTree280 extends LinkedSimpleTree280<String> {
 		else{
 			if (!rootLeftSubtree().isEmpty()){
 				ExpressionTree280 left = (ExpressionTree280) rootLeftSubtree();
-				left.toPostfixExpression();
+				output = output + left.toPostfixExpression();
 			}
 			if (!rootRightSubtree().isEmpty()){
 				ExpressionTree280 right = (ExpressionTree280) rootRightSubtree();
-				right.toPostfixExpression();
+				output = output + right.toPostfixExpression();
 			}
-			System.out.print(rootNode.toString());
-			//output = rootNode.toString() + output;
 		}
-		return output + rootNode.toString();
-			
+		return output + " " + rootNode.toString();	
 	}
 		
 	
@@ -223,8 +236,8 @@ public class ExpressionTree280 extends LinkedSimpleTree280<String> {
 		
 		ExpressionTree280 E = new ExpressionTree280("1.5 / ( 2 - 3 ) ^ 3");
 		System.out.println("Original expression: 1.5 / ( 2 - 3 ) ^ 3");
-//		System.out.println("Infix from tree:    " + E.toInfixExpression());
-//		System.out.println("Prefix from tree:   " + E.toPrefixExpression());
+		System.out.println("Infix from tree:    " + E.toInfixExpression());
+		System.out.println("Prefix from tree:   " + E.toPrefixExpression());
 		System.out.println("Postfix from tree:  " + E.toPostfixExpression());
 		System.out.printf("Expression value = %f\n", E.evaluate(E.rootNode));
 		System.out.println("The tree: \n");
@@ -235,15 +248,23 @@ public class ExpressionTree280 extends LinkedSimpleTree280<String> {
 		
 		E = new ExpressionTree280("2 ^ 2 + 5");
 		System.out.println("Original expression: 2 ^ 2 + 5");
-//		System.out.println("Infix from tree:    " + E.toInfixExpression());
-//		System.out.println("Prefix from tree:   " + E.toPrefixExpression());
+		System.out.println("Infix from tree:    " + E.toInfixExpression());
+		System.out.println("Prefix from tree:   " + E.toPrefixExpression());
 		System.out.println("Postfix from tree:  " + E.toPostfixExpression());
 		System.out.printf("Expression value = %f\n", E.evaluate(E.rootNode));
 		System.out.println("The tree: \n");
 		System.out.println(E.toStringByLevel());
 		System.out.println("-----------------------------------------------");
 		
-		
+		E = new ExpressionTree280("( 25 / 5 ) + ( ( 5 - 3 ) * 9 )");
+		System.out.println("Original expression: 2 ^ 2 + 5");
+		System.out.println("Infix from tree:    " + E.toInfixExpression());
+		System.out.println("Prefix from tree:   " + E.toPrefixExpression());
+		System.out.println("Postfix from tree:  " + E.toPostfixExpression());
+		System.out.printf("Expression value = %f\n", E.evaluate(E.rootNode));
+		System.out.println("The tree: \n");
+		System.out.println(E.toStringByLevel());
+		System.out.println("-----------------------------------------------");
 		
 				
 		
