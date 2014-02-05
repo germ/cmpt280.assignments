@@ -93,32 +93,29 @@ public class ExpressionTree280 extends LinkedSimpleTree280<String> {
 	// Add the other methods required by the question.
 	
 	public String toInfixExpression(){
-		String output ="";
-		output = output + this.rootItem().toString();
-		return "";
+
+		if(rootNode.leftNode == null && rootNode.rightNode == null){
+			return this.rootItem();
+		}
+		else{
+			ExpressionTree280 left = (ExpressionTree280)this.rootLeftSubtree();
+			ExpressionTree280 right = (ExpressionTree280)this.rootRightSubtree();
+			return "("+left.toInfixExpression()+ " " + rootItem() + " "+right.toInfixExpression() + ")";
+		}
 	}
 	
 	public String toPrefixExpression(){
-		String output = "";
-		if (rootNode == null){
-			return "";
+
+		if(rootNode.leftNode == null && rootNode.rightNode == null){
+			return this.rootItem();
 		}
 		else{
-			
-			output = output + rootNode.toString();
-			
-			if (!rootLeftSubtree().isEmpty()){
-				ExpressionTree280 left = (ExpressionTree280) rootLeftSubtree();
-				output = output + left.toPostfixExpression();
-			}
-			
-			if (!rootRightSubtree().isEmpty()){
-				ExpressionTree280 right = (ExpressionTree280) rootRightSubtree();
-				output = output + right.toPostfixExpression();
-			}
+			ExpressionTree280 left = (ExpressionTree280)this.rootLeftSubtree();
+			ExpressionTree280 right = (ExpressionTree280)this.rootRightSubtree();
+			return ""+rootItem() + " "+ left.toPrefixExpression()+" "+right.toPrefixExpression();
 		}
-		return output;	
 	}
+
 	
 
 	public String toPostfixExpression(){
@@ -257,7 +254,7 @@ public class ExpressionTree280 extends LinkedSimpleTree280<String> {
 		System.out.println("-----------------------------------------------");
 		
 		E = new ExpressionTree280("( 25 / 5 ) + ( ( 5 - 3 ) * 9 )");
-		System.out.println("Original expression: 2 ^ 2 + 5");
+		System.out.println("Original expression: ( 25 / 5 ) + ( ( 5 - 3 ) * 9 )");
 		System.out.println("Infix from tree:    " + E.toInfixExpression());
 		System.out.println("Prefix from tree:   " + E.toPrefixExpression());
 		System.out.println("Postfix from tree:  " + E.toPostfixExpression());
@@ -265,6 +262,38 @@ public class ExpressionTree280 extends LinkedSimpleTree280<String> {
 		System.out.println("The tree: \n");
 		System.out.println(E.toStringByLevel());
 		System.out.println("-----------------------------------------------");
+		
+		System.out.println("Invalid token test");
+		try{
+		E = new ExpressionTree280("( 25 % 5 ) + ( ( 5 - 3 ) * 9 )");
+		} catch (InvalidState280Exception e){ System.out.println("Caught incorrect token. Good.");}
+		
+		System.out.println("Invalid spacing test");
+		try{
+		E = new ExpressionTree280("( 25 %5) + (( 5- 3 ) * 9 )");
+		} catch (InvalidState280Exception e){ System.out.println("Caught incorrect spacing. Good.");}
+		
+		System.out.println("Missing operand test");
+		try{
+		E = new ExpressionTree280("( 25 % 5 ) + ( ( 5 3 ) * 9 )");
+		} catch (InvalidState280Exception e){ System.out.println("Caught missing operand. Good.");}
+		
+		System.out.println("Missing close parenthesis test");
+		try{
+		E = new ExpressionTree280("( 25 % 5 + ( ( 5- 3 ) * 9 )");
+		} catch (InvalidState280Exception e){ System.out.println("Caught missing close parenthesis. Good.");}
+		
+		System.out.println("Missing open parenthesis test");
+		try{
+		E = new ExpressionTree280(" 25 % 5 )+ ( ( 5- 3 ) * 9 )");
+		} catch (InvalidState280Exception e){ System.out.println("Caught missing open parenthesis. Good.");}
+		
+		
+		
+		
+		
+		
+		
 		
 				
 		
