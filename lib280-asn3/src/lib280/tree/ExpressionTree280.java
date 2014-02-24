@@ -89,9 +89,6 @@ public class ExpressionTree280 extends LinkedSimpleTree280<String> {
 		
 	}
 	
-	// TODO do Eval, and the to__fixExpressions.
-	// Add the other methods required by the question.
-	
 	public String toInfixExpression(){
 
 		if(rootNode.leftNode == null && rootNode.rightNode == null){
