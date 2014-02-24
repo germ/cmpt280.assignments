@@ -7,7 +7,7 @@ package lib280.dispenser;
 	 * Place this within the PriorityQueue280 class that you define.
      */
 
-
+ 
 	public static void main(String [] args) {
 
 		PriorityQueue280<Integer> Q = new PriorityQueue280<Integer>(5);
