@@ -2,7 +2,7 @@ package lib280.tree;
 
 import lib280.exception.ContainerEmpty280Exception;
 
-public class AVLTree280<I extends Comparable<I>> {
+public class AVLTree280<I extends Comparable<? super I>> {
 
 	/**	Root node of the tree. */
 	protected AVLNode280<I> rootNode;
