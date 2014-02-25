@@ -376,7 +376,7 @@ public class AVLTree280<I extends Comparable<? super I>> implements Cloneable{
 		u.insert(31, u.rootNode);
 		System.out.println(u.toStringByLevel());
 		
-		
+		 
 		AVLTree280<Integer> x = new AVLTree280<Integer>();
 		System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
 		System.out.println("Double Left Rotation(RL)\nInitial:");

@@ -13,7 +13,7 @@ public class AVLNode280<I extends Comparable<? super I>> extends BinaryNode280<I
 		super(x);
 		this.parent = parent;
 	}
-	
+	 
 	/** sets left node height */
 	public void setHeightLeft(int H){
 		this.heightLeft = H;
