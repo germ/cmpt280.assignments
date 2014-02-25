@@ -12,6 +12,45 @@ public class AVLTree280<I extends Comparable<? super I>> {
 		rootNode = null;
 	}
 	
+	/**	Create a tree from a root and two subtrees. <
+	Analysis: Time = O(1) 
+	@param lt tree to initialize as the left subtree.  If null, the left subtree is empty.
+	@param r item to initialize as the root item
+	@param rt tree to initialize as the right subtree.  If null, the right subtree is empty. */
+	public AVLTree280(AVLTree280<I> lt, I r, AVLTree280<I> rt) 
+	{
+		rootNode = createNewNode(r, 1);
+		setRootLeftSubtree(lt);
+		setRootRightSubtree(rt);
+	}
+	
+	public void setRootLeftSubtree(AVLTree280<I> t) throws ContainerEmpty280Exception
+	{
+		if (isEmpty())
+			throw new ContainerEmpty280Exception("Cannot set subtree of an empty tree.");
+		
+		if (t != null)
+			rootNode.setLeftNode(t.rootNode);
+		else
+			rootNode.setLeftNode(null);
+	}
+
+	/**	Set the right subtree to t (set isEmpty if t == null). 
+		Analysis: Time = O(1) 
+		@precond !isEmpty() 
+		@param t tree to become the rootRightSubtree() 
+	  */
+	public void setRootRightSubtree(AVLTree280<I> t) throws ContainerEmpty280Exception
+	{
+		if (isEmpty())
+			throw new ContainerEmpty280Exception("Cannot set subtree of an empty tree.");
+		
+		if (t != null)
+			rootNode.setRightNode(t.rootNode);
+		else
+			rootNode.setRightNode(null);
+	}
+	
 
 	private I rootItem() {
 		if (isEmpty()) 
@@ -119,13 +158,16 @@ public class AVLTree280<I extends Comparable<? super I>> {
 	}
 	
 	public void insert(I data, AVLTree280<I> R){
-		
+		// if empty tree
 		if (R.isEmpty()){
 			R.setRootNode(R.createNewNode(data, 1));
 		}
-		
-		if (data <= R.rootItem()){
-			
+		// TODO fix this
+		// if non empty tree
+		if (data.compareTo(R.rootItem()) <=0){
+			if (R.rootLeftSubtree() == null){
+				R.setRootLeftSubtree(AVLTree280(null,data,null) );
+			}
 		}
 	}
 
