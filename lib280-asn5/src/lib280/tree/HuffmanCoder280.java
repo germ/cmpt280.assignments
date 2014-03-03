@@ -134,7 +134,7 @@ public class HuffmanCoder280 {
 	 * @postcond bitstring for ascii code i is stored in this.codes[i]
 	 */
 	private void extractCodes(LinkedSimpleTree280<CharFrequency280> r, String bitString) {		
-		//TODO
+		//TODO test upload from windows eclipse
 		
 		// This should be a recursive method that traverses the (sub)tree r.  When the traversal
 		// reaches a leaf, the code for the character stored at that leaf should be inserted
