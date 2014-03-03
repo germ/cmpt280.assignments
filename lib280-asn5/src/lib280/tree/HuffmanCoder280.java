@@ -60,8 +60,16 @@ public class HuffmanCoder280 {
 	 * Results are stored in this.frequencies.
 	 */
 	private void countFrequencies() {
-		//TODO 
-		
+		//T.ODO 
+        // read each character and record the frequencies
+		for (int i = 0; i<128;i++){
+			CharFrequency280 newChar = new CharFrequency280( (char) i, 0);
+			frequencies[i] = newChar;
+		}
+        for (char x : this.message.toCharArray()){
+        	frequencies[(int)x].incrementFreq();
+        }
+        System.out.println("frequencies: " + frequencies.toString());
 		// Initialize the frequency of each possible character to zero.
 		
 		// Count the frequency of each character.	
@@ -74,9 +82,34 @@ public class HuffmanCoder280 {
 	 * @postcond the final huffman tree is stored in this.huffmanTree
 	 */
 	private void buildHuffmanTree() {
-		//TODO
+		//T.ODO
 		
-		// For each charcater with non-zero frequency, add its character-frequency pair 
+		for (int i =0; i<128;i++){
+			if (frequencies[i].secondItem() == 0){
+				RootComparableLinkedSimpleTree280<CharFrequency280> tree =  
+						new RootComparableLinkedSimpleTree280<CharFrequency280>(null, frequencies[i], null);
+				huffmanForest.insert(tree);
+			}
+		}
+		
+		while (!huffmanForest.isEmpty()){
+			RootComparableLinkedSimpleTree280<CharFrequency280> t1 = huffmanForest.item();
+			huffmanForest.removeItem();
+			if (!huffmanForest.isEmpty()){
+				RootComparableLinkedSimpleTree280<CharFrequency280> t2 = huffmanForest.item();
+				huffmanForest.removeItem();
+				int count = t1.rootItem().secondItem() + t2.rootItem().secondItem();
+				CharFrequency280 newChar = new CharFrequency280(null, count);
+				RootComparableLinkedSimpleTree280<CharFrequency280> t = 
+						new RootComparableLinkedSimpleTree280<CharFrequency280>(t1, newChar, t2);
+				huffmanForest.insert(t);
+			}
+			else
+				this.huffmanTree = t1;
+		}
+		
+		
+		// For each character with non-zero frequency, add its character-frequency pair 
 		// as a single-node tree to the Huffman Forest.
 		// The min heap will allow us to easily obtain the trees in the forest with the smallest
 		// frequency.
