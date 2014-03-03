@@ -69,7 +69,8 @@ public class HuffmanCoder280 {
         for (char x : this.message.toCharArray()){
         	frequencies[(int)x].incrementFreq();
         }
-        System.out.println("frequencies: " + frequencies.toString());
+        // test
+        //System.out.println("frequencies: " + frequencies.toString());
 		// Initialize the frequency of each possible character to zero.
 		
 		// Count the frequency of each character.	
@@ -85,7 +86,7 @@ public class HuffmanCoder280 {
 		//T.ODO
 		
 		for (int i =0; i<128;i++){
-			if (frequencies[i].secondItem() == 0){
+			if (frequencies[i].secondItem() != 0){
 				RootComparableLinkedSimpleTree280<CharFrequency280> tree =  
 						new RootComparableLinkedSimpleTree280<CharFrequency280>(null, frequencies[i], null);
 				huffmanForest.insert(tree);
@@ -134,8 +135,16 @@ public class HuffmanCoder280 {
 	 * @postcond bitstring for ascii code i is stored in this.codes[i]
 	 */
 	private void extractCodes(LinkedSimpleTree280<CharFrequency280> r, String bitString) {		
-		//TODO test upload from windows eclipse
-		
+		//T.ODO 
+		if (r.rootLeftSubtree().rootNode() != null && r.rootRightSubtree().rootNode() != null){
+			extractCodes(r.rootLeftSubtree(), bitString + '0');
+			extractCodes(r.rootRightSubtree(), bitString + '1');
+		}
+		else{
+			//System.out.println(r.rootItem());
+			this.codes[(int) r.rootItem().firstItem()] = bitString;
+			//System.out.println(bitString);
+		}
 		// This should be a recursive method that traverses the (sub)tree r.  When the traversal
 		// reaches a leaf, the code for the character stored at that leaf should be inserted
 		// into the proper entry in the this.codes array.  The bitString parameter should
@@ -150,14 +159,22 @@ public class HuffmanCoder280 {
 	 * pair onto its encoded bitstring.
 	 */
 	private String codesToString(LinkedSimpleTree280<CharFrequency280> r, String bitString) {
-		// TODO
-		
+		// T.ODO
+		String stringrep = "";
+		if (r.rootLeftSubtree().rootNode() != null && r.rootRightSubtree().rootNode() != null){
+			codesToString(r.rootLeftSubtree(), bitString + '0');
+			codesToString(r.rootRightSubtree(), bitString + '1');
+		}
+		else{
+			stringrep = stringrep +r.rootItem().firstItem() + "(frequency " + r.rootItem().secondItem() + "): " + bitString;
+			//System.out.println(stringrep);
+		}
 		// This should build a string that shows the mapping from characters to codes, that is,
 		// the text under the heading "The Huffman Code" in the sample output given on the assignment.
 		// Essentially, you are converting the information in this.codes to a 
 		// printable format stored in a String and returning it.
 		
-		return "";  // REPLACE THIS LINE WITH YOUR CODE -- this is just to prevent a compiler error.
+		return stringrep;  // REPLACE THIS LINE WITH YOUR CODE -- this is just to prevent a compiler error.
 	}
 	
 	@Override
@@ -247,6 +264,9 @@ public class HuffmanCoder280 {
 		
 		// Decode the message and print it out.
 		System.out.println("Decoded message:\n" + C.decodeMessage());
+		
+		// test tree
+		//System.out.println(" Huffman tree" + C.huffmanTree.toStringByLevel());
 
 	}
 }
