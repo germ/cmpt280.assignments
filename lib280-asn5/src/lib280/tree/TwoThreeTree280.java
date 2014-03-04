@@ -340,6 +340,29 @@ public class TwoThreeTree280<K extends Comparable<? super K>,I extends Comparabl
 	 * @param k is the key of element i */
 	private void auxdelete(TwoThreeNode280<K, I> p, K k) {
 		// TODO Auto-generated method stub
+		if (p.getLeftSubtree() != null){
+			if (!p.getLeftSubtree().isInternal()){
+				if (p.getLeftSubtree().//delete rest
+			}
+		}
+		//repeat for middle, right else ifs
+		else{ //recurse
+			if (k.compareTo(p.getKey1()) < 0){
+				Rs = p.getLeftSubtree();
+			}
+			else if (p.getRightSubtree() == null || k.compareTo(p.getKey2()) < 0){
+				Rs = p.getMiddleSubtree();
+			}
+			else
+				Rs = p.getRightSubtree();
+			delete(Rs, k);
+			
+			if (Rs.getMiddleSubtree() == null){ // Rs has only one child
+				// Steal (first possible of) steal left, steal right, give left, give right
+				// maybe just implement cursor to store parents? what else would work..
+				
+			}
+		}
 		
 	}
 
