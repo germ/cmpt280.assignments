@@ -1,5 +1,7 @@
 package lib280.tree;
 
+
+
 import lib280.base.Pair280;
 import lib280.exception.ContainerEmpty280Exception;
 import lib280.exception.InvalidState280Exception;
@@ -25,12 +27,17 @@ public class TwoThreeTree280<K extends Comparable<? super K>,I extends Comparabl
 			return false;
 	}
 	
-	/** determines the height of the tree */
+	/** determines the height of the tree
+	 * @return height the height of the 2-3 tree, 0 if empty */
 	public int getHeight(){
-		int height = 0;
-		// TODO, tarverse down left while in internal nodes blahblah
-		
-		
+		if (this.isEmpty())
+			return 0;
+		TwoThreeNode280<K,I> n = this.rootNode;
+		int height = 1;
+		while (n.isInternal()){
+			n=n.getLeftSubtree();
+			height++;
+		}
 		return height;
 	}
 	
@@ -39,9 +46,7 @@ public class TwoThreeTree280<K extends Comparable<? super K>,I extends Comparabl
 	 * @param k, key to element we're looking for
 	 * @param n, the root node of tree we're searching in
 	 * @return either return the item, or return null if not found */ 
-	// TODO probably needs some tweaking
-	@SuppressWarnings("unchecked")
-	private I search (K k, @SuppressWarnings("rawtypes") TwoThreeNode280 n){
+	private I search (K k, TwoThreeNode280<K,I> n){
 		if (n.isInternal()){
 			if (k.compareTo((K) n.getKey1()) < 0)
 				return search(k, n.getLeftSubtree());
@@ -204,10 +209,14 @@ public class TwoThreeTree280<K extends Comparable<? super K>,I extends Comparabl
 				if (this.rootNode.getRightSubtree() != null){
 					
 					// TESTT STUFFf
-					System.out.println("XXXXXXXXXXXXXXXXX\n\n" + toStringByLevel() + "\n\nXXXXXXXXXXXX");
+					/*System.out.println("XXXXXXXXXXXXXXXXX\n\n" + toStringByLevel() + "\n\nXXXXXXXXXXXX");
 					System.out.println( " root-> LeftSubTree: " + this.rootNode.getLeftSubtree().getKey1());
 					System.out.println( " root-> MiddleSubTree: " + this.rootNode.getMiddleSubtree().getKey1());
 					System.out.println( " root-> RightSubTree: " + this.rootNode.getRightSubtree().getKey1());
+					System.out.println("root itself: " + this.rootNode.getKey1());
+					System.out.println("ksq itself: " + ksq.secondItem().getKey1());
+					*/
+					
 					// Figure out where 13 with left and right 11, 13 is...
 					// Carry on from here, figure this shout out and rebalance tree properly
 					// END TEST STUFF
@@ -215,18 +224,34 @@ public class TwoThreeTree280<K extends Comparable<? super K>,I extends Comparabl
 															   this.rootNode.getMiddleSubtree(),
 															   this.rootNode.getRightSubtree(),
 															   ksq.secondItem());
-					this.rootNode.setLeftSubtree(sorted[0]);
-					this.rootNode.setMiddleSubtree(sorted[1]);
+					
+					// TEST STUFF 2
+					/*System.out.println("XXXXXXXXXXXXXXXXX\n\n" + toStringByLevel() + "\n\nXXXXXXXXXXXX");
+					System.out.println( " 0 " + sorted[0].getKey1());
+					System.out.println( " 1 " + sorted[1].getKey1());
+					System.out.println( " 2 " + sorted[2].getKey1());
+					System.out.println( " 3 " + sorted[3].getKey1());
+					*/
+					
+					// END TEST STUFF 2
 					InternalTwoThreeNode280<K,I> q = null;
-					q = createInternal(sorted[2],sorted[3],null); // 2 largest nodes
-					this.rootNode.setKey2(null);
+					q = createInternal(this.rootNode,ksq.secondItem(),null); // 2 largest nodes
+					q.setMiddleSubtree(ksq.secondItem());
+					q.getMiddleSubtree().setLeftSubtree(q.getMiddleSubtree().getMiddleSubtree());
+					q.getMiddleSubtree().setMiddleSubtree(sorted[3]);
 					this.rootNode.setRightSubtree(null);
-					this.rootNode.setKey1(this.rootNode.getMiddleSubtree().getKey1()); //set keys to middle children
-					q.setKey1(q.getMiddleSubtree().getKey1());
+					q.setLeftSubtree(this.rootNode);
+					this.rootNode=q;
+					this.rootNode.setKey1(this.rootNode.getMiddleSubtree().getLeftSubtree().getLeftSubtree().getKey1());
+					
+					//this.rootNode.setKey1(this.rootNode.getMiddleSubtree().getKey1()); //set keys to middle children
+					//this.rootNode.getLeftSubtree().setKey1(this.rootNode.getKey1());;
 				}
-				//System.out.println("XXXXXXXXXXXXXXXXX\n\n" + toStringByLevel() + "\n\nXXXXXXXXXXXX");
-				this.rootNode = createInternal(this.rootNode, ksq.secondItem(), null);
-				this.rootNode.setKey1(ksq.firstItem());
+				else{
+					//System.out.println("XXXXXXXXXXXXXXXXX\n\n" + toStringByLevel() + "\n\nXXXXXXXXXXXX");
+					this.rootNode = createInternal(this.rootNode, ksq.secondItem(), null);
+					this.rootNode.setKey1(ksq.firstItem());
+				}
 			}
 		}
 	}
@@ -236,7 +261,6 @@ public class TwoThreeTree280<K extends Comparable<? super K>,I extends Comparabl
 	 * @param k is the key of element i
 	 * @parma i is the element to be inserted */
 	private Pair280<K, InternalTwoThreeNode280<K,I>> auxinsert(TwoThreeNode280<K, I> p, K k, I i) {
-		// TODO Auto-generated method stub
 		// base case, children of p are leaf nodes
 		if (!p.getLeftSubtree().isInternal()){
 			LeafTwoThreeNode280<K,I> c = createLeaf(k,i);
@@ -290,14 +314,6 @@ public class TwoThreeTree280<K extends Comparable<? super K>,I extends Comparabl
 					return null;
 				}
 				else{
-					/*TwoThreeNode280<K, I>[] sorted = sortNodes(ksn.secondItem(),p.getLeftSubtree(),p.getMiddleSubtree(),p.getRightSubtree());
-					p.setLeftSubtree(sorted[0]); //smallest
-					p.setMiddleSubtree(sorted[1]); //2nd smallest
-					p.setKey2(null);
-					p.setRightSubtree(null);
-					InternalTwoThreeNode280<K,I> q = createInternal(sorted[2],sorted[3],null); // 2 largest nodes
-					p.setKey1(p.getMiddleSubtree().getKey1()); //set keys to middle children
-					q.setKey1(q.getMiddleSubtree().getKey1());*/
 					Pair280<K, InternalTwoThreeNode280<K,I>> qks = split(p,ksn.secondItem(),Rs,ksn.firstItem());// DO SPLIT
 					return qks;
 				}
@@ -308,6 +324,12 @@ public class TwoThreeTree280<K extends Comparable<? super K>,I extends Comparabl
 		return null;
 	}
 	
+	/** Splits up the tree
+	 * @param p the parent
+	 * @param n  the new node that needs attachign
+	 * @param Rs the position the node is being added
+	 * @param ks 3rd largest key from before
+	 * @return returns the node to be added to the parent node, and the key*/
 	private Pair280<K, InternalTwoThreeNode280<K,I>> split(TwoThreeNode280<K, I> p,
 														   InternalTwoThreeNode280<K,I> n,
 														   TwoThreeNode280<K,I> Rs,
@@ -362,11 +384,19 @@ public class TwoThreeTree280<K extends Comparable<? super K>,I extends Comparabl
 	 * @param p is the root of tree in which to delete
 	 * @param k is the key of element i */
 	private void auxdelete(TwoThreeNode280<K, I> p, K k) {
-		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub DO DELETE STUFF
 		TwoThreeNode280<K, I> Rs;
 		if (p.getLeftSubtree() != null){
 			if (!p.getLeftSubtree().isInternal()){
-				//if (p.getLeftSubtree().//delete rest
+				if (p.getLeftSubtree().getKey1() == k){
+					auxdelete(p.getLeftSubtree(), k);
+				}
+				else if (p.getMiddleSubtree().getKey1() == k){
+					auxdelete(p.getMiddleSubtree(), k);
+				}
+				else{
+					auxdelete(p.getLeftSubtree(), k);
+				}
 			}
 		}
 		//repeat for middle, right else ifs
@@ -399,6 +429,9 @@ public class TwoThreeTree280<K extends Comparable<? super K>,I extends Comparabl
 			return true;
 	}
 	
+	/** obtains an item from the tree
+	 * @param k the key of the item to search for
+	 * @return returns the item with key k or null if not found */
 	public I obtain(K k){
 		return search(k, this.rootNode);
 	}
@@ -446,10 +479,8 @@ public class TwoThreeTree280<K extends Comparable<? super K>,I extends Comparabl
 		return result;
 	}
 
-	
-	
-	
-	
+
+	/** main method to test*/
 	public static void main(String[] args) {
 		TwoThreeTree280<Integer,String> T = new TwoThreeTree280<Integer,String>();
 		
@@ -550,8 +581,6 @@ public class TwoThreeTree280<K extends Comparable<? super K>,I extends Comparabl
 					System.out.println("Fourth test successful, all 4 tests passed.");
 				else
 					System.out.println("Fourth test unsueccesful, "+ fourthTest + "/4 tests passed.");
-				
-				
 
 		// Fifth Test 
 		System.out.println("================================================");
@@ -617,12 +646,11 @@ public class TwoThreeTree280<K extends Comparable<? super K>,I extends Comparabl
 				else
 					System.out.println("Seventh test unsueccesful, "+ seventhTest + "/4 tests passed.");
 				
-		// Eigth Test 
+		// Eighth Test 
 		System.out.println("================================================");
-		System.out.println("Eigth test, insert [10] item into internal node that has 1 children.");
-		System.out.println("This doesn't really test anything new, but sets up for the 8th test");
+		System.out.println("Eigth test, insert [10] item into leaf, causes 4th level leaves");
 		int EigthTest = 0;
-		T.insert(10, "one"); // TODO This isn't working properly, the tree is gibbled.
+		T.insert(10, "one"); 
 		System.out.println(T.toStringByLevel());
 		// Has/Search tests
 				if (T.has(10))
@@ -638,7 +666,14 @@ public class TwoThreeTree280<K extends Comparable<? super K>,I extends Comparabl
 					System.out.println("Eigth test successful, all 4 tests passed.");
 				else
 					System.out.println("Eigth test unsueccesful, "+ EigthTest + "/4 tests passed.");
+				
+		// getHeight() test.
+		if (T.getHeight() == 4)
+			System.out.println("getHeight() works.");
+		else
+			System.out.println("getHeight() does not work.");
+		
+		// TODO Implement DELETE TESTS
 	}
-	
 }
 
