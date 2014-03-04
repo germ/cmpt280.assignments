@@ -201,11 +201,32 @@ public class TwoThreeTree280<K extends Comparable<? super K>,I extends Comparabl
 		else{
 			Pair280<K, InternalTwoThreeNode280<K,I>> ksq = auxinsert(this.rootNode, k, i);
 			if (ksq != null){
+				if (this.rootNode.getRightSubtree() != null){
+					
+					// TESTT STUFFf
+					System.out.println("XXXXXXXXXXXXXXXXX\n\n" + toStringByLevel() + "\n\nXXXXXXXXXXXX");
+					System.out.println( " root-> LeftSubTree: " + this.rootNode.getLeftSubtree().getKey1());
+					System.out.println( " root-> MiddleSubTree: " + this.rootNode.getMiddleSubtree().getKey1());
+					System.out.println( " root-> RightSubTree: " + this.rootNode.getRightSubtree().getKey1());
+					// Figure out where 13 with left and right 11, 13 is...
+					// Carry on from here, figure this shout out and rebalance tree properly
+					// END TEST STUFF
+					TwoThreeNode280<K, I>[] sorted = sortNodes(this.rootNode.getLeftSubtree(),
+															   this.rootNode.getMiddleSubtree(),
+															   this.rootNode.getRightSubtree(),
+															   ksq.secondItem());
+					this.rootNode.setLeftSubtree(sorted[0]);
+					this.rootNode.setMiddleSubtree(sorted[1]);
+					InternalTwoThreeNode280<K,I> q = null;
+					q = createInternal(sorted[2],sorted[3],null); // 2 largest nodes
+					this.rootNode.setKey2(null);
+					this.rootNode.setRightSubtree(null);
+					this.rootNode.setKey1(this.rootNode.getMiddleSubtree().getKey1()); //set keys to middle children
+					q.setKey1(q.getMiddleSubtree().getKey1());
+				}
 				//System.out.println("XXXXXXXXXXXXXXXXX\n\n" + toStringByLevel() + "\n\nXXXXXXXXXXXX");
 				this.rootNode = createInternal(this.rootNode, ksq.secondItem(), null);
 				this.rootNode.setKey1(ksq.firstItem());
-				// if root has 3 children, then just slot them into two groups
-				// of two
 			}
 		}
 	}
@@ -342,7 +363,30 @@ public class TwoThreeTree280<K extends Comparable<? super K>,I extends Comparabl
 	 * @param k is the key of element i */
 	private void auxdelete(TwoThreeNode280<K, I> p, K k) {
 		// TODO Auto-generated method stub
-		
+		TwoThreeNode280<K, I> Rs;
+		if (p.getLeftSubtree() != null){
+			if (!p.getLeftSubtree().isInternal()){
+				//if (p.getLeftSubtree().//delete rest
+			}
+		}
+		//repeat for middle, right else ifs
+		else{ //recurse
+			if (k.compareTo(p.getKey1()) < 0){
+				Rs = p.getLeftSubtree();
+			}
+			else if (p.getRightSubtree() == null || k.compareTo(p.getKey2()) < 0){
+				Rs = p.getMiddleSubtree();
+			}
+			else
+				Rs = p.getRightSubtree();
+			auxdelete(Rs, k);
+
+			if (Rs.getMiddleSubtree() == null){ // Rs has only one child
+				// Steal (first possible of) steal left, steal right, give left, give right
+				// maybe just implement cursor to store parents? what else would work..
+
+			}
+		}
 	}
 
 	/** determines if there exists an item in the tree with key k 
@@ -575,7 +619,7 @@ public class TwoThreeTree280<K extends Comparable<? super K>,I extends Comparabl
 				
 		// Eigth Test 
 		System.out.println("================================================");
-		System.out.println("Eigth test, insert [1] item into internal node that has 1 children.");
+		System.out.println("Eigth test, insert [10] item into internal node that has 1 children.");
 		System.out.println("This doesn't really test anything new, but sets up for the 8th test");
 		int EigthTest = 0;
 		T.insert(10, "one"); // TODO This isn't working properly, the tree is gibbled.
