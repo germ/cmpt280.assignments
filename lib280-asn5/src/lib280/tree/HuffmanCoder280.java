@@ -160,21 +160,19 @@ public class HuffmanCoder280 {
 	 */
 	private String codesToString(LinkedSimpleTree280<CharFrequency280> r, String bitString) {
 		// T.ODO
-		String stringrep = "";
 		if (r.rootLeftSubtree().rootNode() != null && r.rootRightSubtree().rootNode() != null){
-			codesToString(r.rootLeftSubtree(), bitString + '0');
-			codesToString(r.rootRightSubtree(), bitString + '1');
+			return codesToString(r.rootLeftSubtree(), bitString + '0') + codesToString(r.rootRightSubtree(), bitString + '1');
 		}
 		else{
-			stringrep = stringrep +r.rootItem().firstItem() + "(frequency " + r.rootItem().secondItem() + "): " + bitString;
-			//System.out.println(stringrep);
+			bitString = r.rootItem().firstItem() + "(frequency " + r.rootItem().secondItem() + "): " + bitString + "\n";
+			return bitString;
 		}
 		// This should build a string that shows the mapping from characters to codes, that is,
 		// the text under the heading "The Huffman Code" in the sample output given on the assignment.
 		// Essentially, you are converting the information in this.codes to a 
 		// printable format stored in a String and returning it.
 		
-		return stringrep;  // REPLACE THIS LINE WITH YOUR CODE -- this is just to prevent a compiler error.
+		//return bitString;  // REPLACE THIS LINE WITH YOUR CODE -- this is just to prevent a compiler error.
 	}
 	
 	@Override
@@ -201,12 +199,24 @@ public class HuffmanCoder280 {
 	 * @return A string containing the decoded message.
 	 */
 	public String decodeMessage() {
-		//TODO
+		//T.ODO
+		String msg = "";
+		BinaryNode280<CharFrequency280> ptr = this.huffmanTree.rootNode;
 		
+		for (char x: encodedMessage.toCharArray()){
+			if (x == '0')
+				ptr = ptr.leftNode;
+			else
+				ptr = ptr.rightNode;
+			if (ptr.leftNode() == null && ptr.rightNode() == null){
+				msg = msg+ptr.item().firstItem();
+				ptr = this.huffmanTree.rootNode;
+			}
+		}
 		// It's up to you to figure out the algoirthm.
 		// Hint: use an iterative, not recursive algoirthm.
 		
-		return null;  // REPLACE THIS LINE WITH YOUR CODE -- this is just to prevent a compiler error.
+		return msg;  // REPLACE THIS LINE WITH YOUR CODE -- this is just to prevent a compiler error.
 	}
 	
 	
@@ -259,7 +269,7 @@ public class HuffmanCoder280 {
 		
 		// Print encoded message and message lengths.
 		System.out.println("Encoded message:\n" + C.getEncodedMessage()+"\n");
-		System.out.printf("Original message would require %d bytes.\nEncoded message requires %.0f bytes if encoded with 8-bits per byte.",
+		System.out.printf("Original message would require %d bytes.\nEncoded message requires %.0f bytes if encoded with 8-bits per byte.\n\n",
 				C.getMessage().length(), Math.ceil((float)C.getEncodedMessage().length()/8.0) );
 		
 		// Decode the message and print it out.
