@@ -204,6 +204,8 @@ public class TwoThreeTree280<K extends Comparable<? super K>,I extends Comparabl
 				//System.out.println("XXXXXXXXXXXXXXXXX\n\n" + toStringByLevel() + "\n\nXXXXXXXXXXXX");
 				this.rootNode = createInternal(this.rootNode, ksq.secondItem(), null);
 				this.rootNode.setKey1(ksq.firstItem());
+				// if root has 3 children, then just slot them into two groups
+				// of two
 			}
 		}
 	}
