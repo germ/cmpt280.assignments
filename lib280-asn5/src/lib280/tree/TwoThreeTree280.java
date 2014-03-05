@@ -167,7 +167,6 @@ public class TwoThreeTree280<K extends Comparable<? super K>,I extends Comparabl
 		return sorted;
 	}
 	
-	
 
 	/** Creates a new InternalTwoThreeNode280 out of 2 or more 2-3 nodes
 	 * @precond 1st and 2nd parameters must not be null
@@ -207,33 +206,10 @@ public class TwoThreeTree280<K extends Comparable<? super K>,I extends Comparabl
 			Pair280<K, InternalTwoThreeNode280<K,I>> ksq = auxinsert(this.rootNode, k, i);
 			if (ksq != null){
 				if (this.rootNode.getRightSubtree() != null){
-					
-					// TESTT STUFFf
-					/*System.out.println("XXXXXXXXXXXXXXXXX\n\n" + toStringByLevel() + "\n\nXXXXXXXXXXXX");
-					System.out.println( " root-> LeftSubTree: " + this.rootNode.getLeftSubtree().getKey1());
-					System.out.println( " root-> MiddleSubTree: " + this.rootNode.getMiddleSubtree().getKey1());
-					System.out.println( " root-> RightSubTree: " + this.rootNode.getRightSubtree().getKey1());
-					System.out.println("root itself: " + this.rootNode.getKey1());
-					System.out.println("ksq itself: " + ksq.secondItem().getKey1());
-					*/
-					
-					// Figure out where 13 with left and right 11, 13 is...
-					// Carry on from here, figure this shout out and rebalance tree properly
-					// END TEST STUFF
 					TwoThreeNode280<K, I>[] sorted = sortNodes(this.rootNode.getLeftSubtree(),
 															   this.rootNode.getMiddleSubtree(),
 															   this.rootNode.getRightSubtree(),
 															   ksq.secondItem());
-					
-					// TEST STUFF 2
-					/*System.out.println("XXXXXXXXXXXXXXXXX\n\n" + toStringByLevel() + "\n\nXXXXXXXXXXXX");
-					System.out.println( " 0 " + sorted[0].getKey1());
-					System.out.println( " 1 " + sorted[1].getKey1());
-					System.out.println( " 2 " + sorted[2].getKey1());
-					System.out.println( " 3 " + sorted[3].getKey1());
-					*/
-					
-					// END TEST STUFF 2
 					InternalTwoThreeNode280<K,I> q = null;
 					q = createInternal(this.rootNode,ksq.secondItem(),null); // 2 largest nodes
 					q.setMiddleSubtree(ksq.secondItem());
@@ -244,8 +220,6 @@ public class TwoThreeTree280<K extends Comparable<? super K>,I extends Comparabl
 					this.rootNode=q;
 					this.rootNode.setKey1(this.rootNode.getMiddleSubtree().getLeftSubtree().getLeftSubtree().getKey1());
 					
-					//this.rootNode.setKey1(this.rootNode.getMiddleSubtree().getKey1()); //set keys to middle children
-					//this.rootNode.getLeftSubtree().setKey1(this.rootNode.getKey1());;
 				}
 				else{
 					//System.out.println("XXXXXXXXXXXXXXXXX\n\n" + toStringByLevel() + "\n\nXXXXXXXXXXXX");
@@ -300,7 +274,6 @@ public class TwoThreeTree280<K extends Comparable<? super K>,I extends Comparabl
 				Rs = p.getMiddleSubtree();
 			else
 				Rs = p.getRightSubtree();
-			//(n, ks) = insert(Rs, i, k);
 			Pair280<K, InternalTwoThreeNode280<K,I>> ksn = auxinsert(Rs, k, i);
 			
 			if (ksn != null){
@@ -384,27 +357,27 @@ public class TwoThreeTree280<K extends Comparable<? super K>,I extends Comparabl
 	 * @param p is the root of tree in which to delete
 	 * @param k is the key of element i */
 	private void auxdelete(TwoThreeNode280<K, I> p, K k) {
-		// TODO Auto-generated method stub DO DELETE STUFF
 		TwoThreeNode280<K, I> Rs;
 		if (p.getLeftSubtree() != null && !p.getLeftSubtree().isInternal()){// is it a leaf node?
 			if (p.getLeftSubtree().getKey1() == k){
 				if (p.getMiddleSubtree() != null){
 					p.setLeftSubtree(p.getMiddleSubtree());
-					p.setMiddleSubtree(null); // this NPE until steal/give implemented
+					p.setMiddleSubtree(null);
 				}
 				if (p.getRightSubtree() != null){
 					p.setMiddleSubtree(p.getRightSubtree());
 					p.setRightSubtree(null);
-					//p.setKey2(null);
 				}
 			}
 			else if (p.getMiddleSubtree().getKey1() == k){
 				p.setKey1(p.getLeftSubtree().getKey1());
+				p.setMiddleSubtree(null);
 				if (p.getRightSubtree() != null){
 					p.setMiddleSubtree(p.getRightSubtree());
 					p.setKey2(null);
 					p.setRightSubtree(null);
 				}
+				
 			}
 			else{
 				if (p.getRightSubtree() != null){
@@ -427,7 +400,6 @@ public class TwoThreeTree280<K extends Comparable<? super K>,I extends Comparabl
 
 			if (Rs.getMiddleSubtree() == null){ // Rs has only one child
 				// Steal (first possible of) steal left, steal right, give left, give right
-				//System.out.println(Rs.getKey2());
 				if (Rs == p.getLeftSubtree()){
 					if (p.getMiddleSubtree().getRightSubtree()!= null){ //  has 3, need to steal
 						stealRight(p.getMiddleSubtree(),p , Rs);
@@ -540,6 +512,8 @@ public class TwoThreeTree280<K extends Comparable<? super K>,I extends Comparabl
 		  from.setKey1(from.getKey2());
 		  from.setKey2(null);
 		  p.setKey1(from.getLeftSubtree().getKey1());
+		  if (from.getRightSubtree() != null)
+			  from.setRightSubtree(null);
 	  }
 	  else if(Rs == p.getMiddleSubtree()){
 		  Rs.setKey1(p.getKey2());
@@ -547,7 +521,9 @@ public class TwoThreeTree280<K extends Comparable<? super K>,I extends Comparabl
 		  Rs.setMiddleSubtree(from.getLeftSubtree());
 		  from.setLeftSubtree(from.getMiddleSubtree());
 		  from.setMiddleSubtree(from.getRightSubtree());
-		  from.setKey2(null);
+		  from.setKey2(null); // maybe drop a kill right here or someting
+		  if (from.getRightSubtree() != null)
+			  from.setRightSubtree(null);
 	  }
 	}
 	
@@ -559,11 +535,11 @@ public class TwoThreeTree280<K extends Comparable<? super K>,I extends Comparabl
 	 */
 	private void stealLeft(TwoThreeNode280<K,I> from, TwoThreeNode280<K,I> p, TwoThreeNode280<K,I> Rs){
 		  if(Rs == p.getMiddleSubtree()){
-			  Rs.setKey1(p.getKey1());
-			  p.setKey1(p.getLeftSubtree().getKey2());
+			   p.setKey1(p.getLeftSubtree().getKey2());
 			  Rs.setMiddleSubtree(Rs.getLeftSubtree());
 			  Rs.setLeftSubtree(from.getRightSubtree());
 			  from.setKey2(null);
+			  Rs.setKey1(Rs.getMiddleSubtree().getKey1());
 			  from.setRightSubtree(null);
 		  }
 		  else if(Rs == p.getRightSubtree()){
@@ -571,7 +547,7 @@ public class TwoThreeTree280<K extends Comparable<? super K>,I extends Comparabl
 			  Rs.setMiddleSubtree(Rs.getLeftSubtree());
 			  Rs.setLeftSubtree(from.getRightSubtree());
 			  from.setRightSubtree(null);
-			  from.setKey2(null);
+			  //from.setKey2(null);
 		  }
 	}
 
@@ -828,8 +804,7 @@ public class TwoThreeTree280<K extends Comparable<? super K>,I extends Comparabl
 			System.out.println("getHeight() works.");
 		else
 			System.out.println("getHeight() does not work.");
-		
-		// TODO Implement DELETE TESTS
+
 
 		System.out.println("================================================\n"
 				+ "Inserted zero to create 3 node.");
@@ -850,10 +825,66 @@ public class TwoThreeTree280<K extends Comparable<? super K>,I extends Comparabl
 		T.delete(0);
 		System.out.println(T.toStringByLevel());
 		System.out.println("================================================\n"
-				+ "Re added 0, deleted 8 to prompt steal left");
-		T.insert(0, "zero");
-		T.delete(8);
-		System.out.println(T.toStringByLevel());
+				+ "Building BaseTree to test from\n"
+				+ "will be used for all tests, restoring back to this"
+				+ "form before prompting the proper deletes when required");
+		TwoThreeTree280<Integer,String> slm = new TwoThreeTree280<Integer,String>();
+		slm.insert(3, "");
+		slm.insert(13, "");
+		slm.insert(8, "");
+		slm.insert(11, "");
+		slm.insert(45, "");
+		slm.insert(22, "");
+		slm.insert(1, "");
+		slm.insert(12, "");
+		slm.insert(30, "");
+		System.out.println(slm.toStringByLevel());
+		System.out.println("================================================\n"
+				+ "deleting 30 and 45 to prompt stealLeft from right");
+		slm.delete(30);
+		slm.delete(45);
+		System.out.println(slm.toStringByLevel());
+
+		System.out.println("================================================\n"
+				+ "deleting 11 to prompt stealLeft from middle");
+		slm.delete(11);
+		System.out.println(slm.toStringByLevel());
+		
+		System.out.println("================================================\n"
+				+ "deleting 3 to prompt giveRight from left");
+		slm.delete(3);
+		System.out.println(slm.toStringByLevel());
+		
+		System.out.println("================================================\n"
+				+ " Rebuilding base tree to do more tests");
+		TwoThreeTree280<Integer,String> grm = new TwoThreeTree280<Integer,String>();
+		grm.insert(3, "");
+		grm.insert(13, "");
+		grm.insert(8, "");
+		grm.insert(11, "");
+		grm.insert(45, "");
+		grm.insert(22, "");
+		grm.insert(1, "");
+		grm.insert(12, "");
+		grm.insert(30, "");
+		System.out.println(grm.toStringByLevel());
+		System.out.println("================================================\n"
+				+ " deleting 13, 22 and 30 to prompt giveLeft from right ");
+		grm.delete(13);
+		grm.delete(22);
+		grm.delete(30);
+		System.out.println(grm.toStringByLevel());
+		
+		System.out.println("================================================\n"
+				+ " deleting 3, and 8 to prompt stealRight from left ");
+		grm.delete(3);
+		grm.delete(8);
+		System.out.println(grm.toStringByLevel());
+		
+		System.out.println("================================================\n"
+				+ " All of these methods compile and work as expected.");
+
+		
 	}
 }
 
