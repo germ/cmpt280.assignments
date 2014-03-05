@@ -386,16 +386,30 @@ public class TwoThreeTree280<K extends Comparable<? super K>,I extends Comparabl
 	private void auxdelete(TwoThreeNode280<K, I> p, K k) {
 		// TODO Auto-generated method stub DO DELETE STUFF
 		TwoThreeNode280<K, I> Rs;
-		if (p.getLeftSubtree() != null){
-			if (!p.getLeftSubtree().isInternal()){
-				if (p.getLeftSubtree().getKey1() == k){
-					auxdelete(p.getLeftSubtree(), k);
+		if (p.getLeftSubtree() != null && !p.getLeftSubtree().isInternal()){// is it a leaf node?
+			if (p.getLeftSubtree().getKey1() == k){
+				if (p.getMiddleSubtree() != null){
+					p.setLeftSubtree(p.getMiddleSubtree());
+					p.setMiddleSubtree(null); // this NPE until steal/give implemented
 				}
-				else if (p.getMiddleSubtree().getKey1() == k){
-					auxdelete(p.getMiddleSubtree(), k);
+				if (p.getRightSubtree() != null){
+					p.setMiddleSubtree(p.getRightSubtree());
+					p.setRightSubtree(null);
+					//p.setKey2(null);
 				}
-				else{
-					auxdelete(p.getLeftSubtree(), k);
+			}
+			else if (p.getMiddleSubtree().getKey1() == k){
+				p.setKey1(p.getLeftSubtree().getKey1());
+				if (p.getRightSubtree() != null){
+					p.setMiddleSubtree(p.getRightSubtree());
+					p.setKey2(null);
+					p.setRightSubtree(null);
+				}
+			}
+			else{
+				if (p.getRightSubtree() != null){
+					p.setRightSubtree(null);
+					//p.setKey2(null);
 				}
 			}
 		}
@@ -413,10 +427,152 @@ public class TwoThreeTree280<K extends Comparable<? super K>,I extends Comparabl
 
 			if (Rs.getMiddleSubtree() == null){ // Rs has only one child
 				// Steal (first possible of) steal left, steal right, give left, give right
-				// maybe just implement cursor to store parents? what else would work..
-
+				//System.out.println(Rs.getKey2());
+				if (Rs == p.getLeftSubtree()){
+					if (p.getMiddleSubtree().getRightSubtree()!= null){ //  has 3, need to steal
+						stealRight(p.getMiddleSubtree(),p , Rs);
+					}
+					else{ // has 2, can give
+						giveRight(p.getMiddleSubtree(), p, Rs);
+					}
+				}
+				else if (Rs == p.getMiddleSubtree()){
+					if (p.getLeftSubtree().getRightSubtree() != null){ // has 3 need to steal
+						stealLeft(p.getLeftSubtree(), p, Rs);
+					}
+					else if (p.getRightSubtree() != null && p.getRightSubtree().getRightSubtree() != null){ // has right tree, with 3 children
+						stealRight(p.getRightSubtree(), p, Rs);
+					}
+					else if (p.getLeftSubtree().getRightSubtree() == null){ // has 2 can give
+						giveLeft(p.getLeftSubtree(), p, Rs);
+					}
+					else{
+						giveRight(p.getRightSubtree(),p,Rs);
+					}
+				}
+				else{ // Rs is right subtree
+					if (p.getMiddleSubtree().getRightSubtree() != null) // has 3 need to steal
+						stealLeft(p.getMiddleSubtree(), p, Rs);
+					else{ // has 2 can give
+						giveLeft(p.getMiddleSubtree(), p, Rs);
+					}
+				}
+				
+			}			
+		}
+	}
+	
+	/**
+	 * fixes the imbalance of the nodes
+	 * @param to is the subtree being given to
+	 * @param p is parent of both trees
+	 * @param Rs has only one subtree
+	 */
+	private void giveRight(TwoThreeNode280<K,I> to, TwoThreeNode280<K,I> p, TwoThreeNode280<K,I> Rs){
+	  if(Rs == p.getLeftSubtree()){
+	    to.setRightSubtree(to.getMiddleSubtree());
+	    to.setMiddleSubtree(to.getLeftSubtree());
+	    to.setLeftSubtree(Rs.getLeftSubtree());
+	    to.setKey2(to.getKey1());
+	    to.setKey1(p.getKey1());
+	    p.setLeftSubtree(to);
+	    if(p.isRightChild()){
+	      p.setKey1(p.getKey2());
+	      p.setKey2(null);
+	      p.setMiddleSubtree(p.getRightSubtree());
+	      p.setRightSubtree(null);
+	    }
+	    else{
+	      p.setMiddleSubtree(null);
+	    }
+	  }
+	  else if(Rs == p.getMiddleSubtree()){
+	    Rs.setMiddleSubtree(to.getLeftSubtree());
+	    Rs.setRightSubtree(to.getMiddleSubtree());
+	    Rs.setKey1(p.getKey2());
+	    Rs.setKey2(to.getKey1());
+	    p.setKey2(null);
+	    p.setRightSubtree(null);
+	  }
+	}
+	 
+	/**
+	 * fixes the imbalance of the nodes
+	 * @param to is the subtree being given to
+	 * @param p is parent of both trees
+	 * @param Rs has only one subtree
+	 */
+	private void giveLeft(TwoThreeNode280<K,I> to, TwoThreeNode280<K,I> p, TwoThreeNode280<K,I> Rs){
+		if(Rs == p.getRightSubtree()){
+			to.setRightSubtree(Rs.getLeftSubtree());
+			Rs.setLeftSubtree(null);
+			to.setKey2(p.getKey2());
+			p.setKey2(null);
+			p.setRightSubtree(null);
+		}
+		else if(Rs == p.getMiddleSubtree()){
+			to.setRightSubtree(Rs.getLeftSubtree());
+			to.setKey2(p.getKey1());
+			if(p.isRightChild()){
+				p.setKey1(p.getKey2());
+				p.setKey2(null);
+				p.setMiddleSubtree(p.getRightSubtree());
+				p.setRightSubtree(null);
+			}
+			else{
+				p.setMiddleSubtree(null);
 			}
 		}
+	}
+	
+	/**
+	 * fixes the imbalance of the nodes
+	 * @param from is the subtree being stolen from
+	 * @param p is parent of both trees
+	 * @param Rs has only one subtree
+	 */
+	private void stealRight(TwoThreeNode280<K,I> from, TwoThreeNode280<K,I> p, TwoThreeNode280<K,I> Rs){
+	  if(Rs == p.getLeftSubtree()){
+		  Rs.setKey1(p.getKey1());
+		  Rs.setMiddleSubtree(from.getLeftSubtree());
+		  from.setLeftSubtree(from.getMiddleSubtree());
+		  from.setMiddleSubtree(from.getRightSubtree());
+		  from.setKey1(from.getKey2());
+		  from.setKey2(null);
+		  p.setKey1(from.getLeftSubtree().getKey1());
+	  }
+	  else if(Rs == p.getMiddleSubtree()){
+		  Rs.setKey1(p.getKey2());
+		  p.setKey2(from.getKey1());
+		  Rs.setMiddleSubtree(from.getLeftSubtree());
+		  from.setLeftSubtree(from.getMiddleSubtree());
+		  from.setMiddleSubtree(from.getRightSubtree());
+		  from.setKey2(null);
+	  }
+	}
+	
+	/**
+	 * fixes the imbalance of the nodes
+	 * @param from is the subtree being stolen from
+	 * @param p is parent of both trees
+	 * @param Rs has only one subtree
+	 */
+	private void stealLeft(TwoThreeNode280<K,I> from, TwoThreeNode280<K,I> p, TwoThreeNode280<K,I> Rs){
+		  if(Rs == p.getMiddleSubtree()){
+			  Rs.setKey1(p.getKey1());
+			  p.setKey1(p.getLeftSubtree().getKey2());
+			  Rs.setMiddleSubtree(Rs.getLeftSubtree());
+			  Rs.setLeftSubtree(from.getRightSubtree());
+			  from.setKey2(null);
+			  from.setRightSubtree(null);
+		  }
+		  else if(Rs == p.getRightSubtree()){
+			  p.setKey2(p.getMiddleSubtree().getKey2());
+			  Rs.setMiddleSubtree(Rs.getLeftSubtree());
+			  Rs.setLeftSubtree(from.getRightSubtree());
+			  from.setRightSubtree(null);
+			  from.setKey2(null);
+		  }
 	}
 
 	/** determines if there exists an item in the tree with key k 
@@ -674,6 +830,30 @@ public class TwoThreeTree280<K extends Comparable<? super K>,I extends Comparabl
 			System.out.println("getHeight() does not work.");
 		
 		// TODO Implement DELETE TESTS
+
+		System.out.println("================================================\n"
+				+ "Inserted zero to create 3 node.");
+		T.insert(0, "zero");
+		System.out.println(T.toStringByLevel());
+		System.out.println("================================================\n"
+				+ "Deleting 3, righmost digit of 3 node");
+		T.delete(3);
+		System.out.println(T.toStringByLevel());
+		System.out.println("================================================\n"
+				+ "Re added 3 back in, deleted 1 this time");
+		T.insert(3, "three");
+		T.delete(1);
+		System.out.println(T.toStringByLevel());
+		System.out.println("================================================\n"
+				+ "Re added 1 back in, deleted 0 this time");
+		T.insert(1, "one");
+		T.delete(0);
+		System.out.println(T.toStringByLevel());
+		System.out.println("================================================\n"
+				+ "Re added 0, deleted 8 to prompt steal left");
+		T.insert(0, "zero");
+		T.delete(8);
+		System.out.println(T.toStringByLevel());
 	}
 }
 
