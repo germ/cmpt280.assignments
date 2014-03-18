@@ -1,5 +1,6 @@
 package lib280.graph;
 
+/** weighted edge class */
 public class WeightedEdge280<V> extends Edge280<Vertex280>{
 
 	/** weight of edge */

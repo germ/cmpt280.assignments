@@ -6,8 +6,10 @@ import java.util.Scanner;
 
 import lib280.base.CursorPosition280;
 
+/** WeightedGraph class*/
 public class WeightedGraphAdjListRep280<V> extends GraphAdjListRep280<Vertex280, WeightedEdge280<V>>{
 
+	/** constructs a weighted graph*/
 	public WeightedGraphAdjListRep280(int cap, boolean d, String vertexTypeName, String edgeTypeName) {
 		super(cap, d, vertexTypeName, edgeTypeName);
 	}
