@@ -98,7 +98,7 @@ public class KDTree280<I extends Comparable<? super I>> extends LinkedSimpleTree
 		String result = "";
 		if (T == null)
 			return result+= "";
-		return result; // what do i even do for this??
+		return result; // what do i even do for this?? TODO
 	}
 	
 
@@ -163,6 +163,8 @@ public class KDTree280<I extends Comparable<? super I>> extends LinkedSimpleTree
 		@SuppressWarnings({ "unchecked" })
 		KDTree280 newTree2 = new KDTree280(arr2, 0,7,0);
 		System.out.println(newTree2.rootNode.toStringByLevel());
+		
+		// TODO show search bit.
 		
 	}
 	
