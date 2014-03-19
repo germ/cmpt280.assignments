@@ -94,6 +94,10 @@ public class WeightedGraphAdjListRep280<V> extends GraphAdjListRep280<Vertex280,
 			if (this.isAdjacent(srcIdx, dstIdx))
 				throw new RuntimeException("Edge (" + srcIdx + ", " + dstIdx
 						+ ") appears multiple times in the data file.");
+			
+			if (wghtIdx < 0)
+				throw new RuntimeException(
+						"Illegal weight, can not be negative.");
 
 			this.addEdge(srcIdx, dstIdx);
 			this.setWeight(srcIdx, dstIdx, wghtIdx);
@@ -182,11 +186,16 @@ public class WeightedGraphAdjListRep280<V> extends GraphAdjListRep280<Vertex280,
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		WeightedGraphAdjListRep280<Vertex280> G = new WeightedGraphAdjListRep280<Vertex280>(10, true, "lib280.graph.Vertex280", "lib280.graph.WeightedEdge280");
+		WeightedGraphAdjListRep280<Vertex280> G = new WeightedGraphAdjListRep280<Vertex280>(10, false, "lib280.graph.Vertex280", "lib280.graph.WeightedEdge280");
 
 		G.initGraphFromFile("src/lib280/graph/weightedtestgraph.gra");
 		System.out.println(G.toString());
 		
+		System.out.println("\n\nNow printing a directed graph.\n\n");
+		
+		WeightedGraphAdjListRep280<Vertex280> H = new WeightedGraphAdjListRep280<Vertex280>(10, true, "lib280.graph.Vertex280", "lib280.graph.WeightedEdge280");
+		H.initGraphFromFile("src/lib280/graph/weightedtestgraph.gra");
+		System.out.println(H.toString());
 	}
 
 }
