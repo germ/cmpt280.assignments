@@ -94,17 +94,49 @@ public class KDTree280<I extends Comparable<? super I>> extends LinkedSimpleTree
 		return swapOffset;
 	}
 	
-	public String searchRange(KDNode280 T,KDNode280 a,KDNode280 b,int depth){
+	/** Search Range
+	 * @param T subtree in which to search for elements between a and b inclusive
+	 * @param a - lower bound of search range
+	 * @param b - midd bound  of search range
+	 * @param depth the depth of the tree*/
+	public String searchRange(KDNode280<I> T,KDNode280<I> a,KDNode280<I> b, int depth){
 		String result = "";
-		if (T == null)
-			return result+= "";
-		return result; // what do i even do for this?? TODO
+		if (T.leftChild == null || T.rightChild == null){
+			if (T.leftChild==null && T.rightChild!= null)
+				return result+=T.rightChild.item.toString()+ "\n" + T.item.toString()+ "\n";
+			else if (T.leftChild != null && T.rightChild == null)
+				return result+=T.leftChild.item.toString() + "\n" + T.item.toString()+ "\n";
+			else
+				return result+= T.item.toString()+ "\n";
+		}
+		int dimension = depth % k;
+		
+		//System.out.println("String so far: " + result);
+		
+		if (T.leftChild.item.compareByDim(dimension, a.item) <= 0){
+			// items less than a, search right
+			return searchRange(T.leftChild, a, b, depth+1);
+		}
+		else if (T.leftChild.item.compareByDim(dimension, b.item) >= 0){
+			// items larger than b, search left
+			return searchRange(T.rightChild, a, b, depth+1);
+		}
+		else{
+			// could be both trees
+			String L = this.searchRange(T.leftChild, a, b, depth +1);
+			String R = this.searchRange(T.rightChild, a, b, depth+1);
+			if (T.item.compareByDim(dimension, a.item) >= 0 && T.item.compareByDim(dimension, b.item) <= 0){
+				return result+= L + R + T.item + "\n";
+			}
+			else
+				return result+=L+R+ "\n";
+		}
 	}
 	
 
 	
 	/** a method to test the function */
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void main(String args[]) {
 			
 		System.out.println("Input 2D points:");
@@ -131,7 +163,6 @@ public class KDTree280<I extends Comparable<? super I>> extends LinkedSimpleTree
 		for (int i = 0; i<arr.length;i++)
 			System.out.println(arr[i].item.toString());
 
-		@SuppressWarnings({ "unchecked" })
 		KDTree280 newTree = new KDTree280(arr, 0,7,0);
 		
 		System.out.println(newTree.rootNode.toStringByLevel());
@@ -160,12 +191,39 @@ public class KDTree280<I extends Comparable<? super I>> extends LinkedSimpleTree
 		
 		for (int i = 0; i<arr2.length; i++)
 			System.out.println(arr2[i].item.toString());
-		@SuppressWarnings({ "unchecked" })
 		KDTree280 newTree2 = new KDTree280(arr2, 0,7,0);
 		System.out.println(newTree2.rootNode.toStringByLevel());
 		
-		// TODO show search bit.
+	
 		
+		Double a1[] = {1.0,5.0,8.0};
+		Double b1[] = {1.0,6.0,9.0};
+		
+		KDNode280 a = new KDNode280(3);
+		a.item.setPoint(a1);
+		
+		KDNode280 b = new KDNode280(3);
+		b.item.setPoint(b1);
+		System.out.println("Looking for points between {0.0,4.0,7.0} and {1.0,6.0,9.0}\nFound: ");
+		System.out.print(newTree2.searchRange(newTree2.rootNode, a, b, 0));
+		
+		System.out.println("\n\n");
+		
+		Double a2[] = {0.0,0.0,0.0};
+		Double b2[] = {3.0,14.0,6.0};
+		a.item.setPoint(a2);
+		b.item.setPoint(b2);
+		System.out.println("Looking for points between {0.0,0.0,0.0} and {3.0,14.0,6.0}\nFound: ");
+		System.out.print(newTree2.searchRange(newTree2.rootNode, a, b, 0));
+		
+		System.out.println("\n\n");
+		
+		Double a3[] = {-5.0,-5.0,-5.0};
+		Double b3[] = {20.0,20.0,20.0};
+		a.item.setPoint(a3);
+		b.item.setPoint(b3);
+		System.out.println("Looking for points between {-5.0,-5.0,-5.0} and {20.0,20.0,20.0}\nFound: ");
+		System.out.print(newTree2.searchRange(newTree2.rootNode, a, b, 0));
 	}
 	
 }
