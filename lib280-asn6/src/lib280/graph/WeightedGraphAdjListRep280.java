@@ -9,9 +9,13 @@ import lib280.base.CursorPosition280;
 /** WeightedGraph class*/
 public class WeightedGraphAdjListRep280<V> extends GraphAdjListRep280<Vertex280, WeightedEdge280<V>>{
 
+	/** directed boolean value */
+	boolean d;
+	
 	/** constructs a weighted graph*/
 	public WeightedGraphAdjListRep280(int cap, boolean d, String vertexTypeName, String edgeTypeName) {
 		super(cap, d, vertexTypeName, edgeTypeName);
+		this.d = d;
 	}
 
 
@@ -92,11 +96,48 @@ public class WeightedGraphAdjListRep280<V> extends GraphAdjListRep280<Vertex280,
 						+ ") appears multiple times in the data file.");
 
 			this.addEdge(srcIdx, dstIdx);
-			this.eSearch(this.vertex(dstIdx), this.vertex(srcIdx));
-			this.eItem().setWeight(wghtIdx);
-			this.eSearch(this.vertex(srcIdx), this.vertex(dstIdx));
-			this.eItem().setWeight(wghtIdx);
+			this.setWeight(srcIdx, dstIdx, wghtIdx);
+			if (this.d == false){ // if undirected do backwards
+				this.setWeight(dstIdx, srcIdx, wghtIdx);
+			}
+
 		}
+	}
+	
+	/** set the weight via integer vertex indices 
+	 * @param v1, first vertex
+	 * @param v2, 2nd vertex
+	 * @param wghtIdx weight */
+	public void setWeight(int v1, int v2, double wghtIdx){
+		this.eSearch(this.vertex(v1), this.vertex(v2));
+		this.eItem().setWeight(wghtIdx);
+	}
+	
+	/** get the weight via integer vertex indices
+	 * @param v1, int of first vertex
+	 * @param v2, int of 2nd vertex
+	 * @return weight of the edge*/
+	public Double getWeight(int v1, int v2){
+		this.eSearch(this.vertex(v1), this.vertex(v2));
+		return this.eItem().getWeight();
+	}
+	
+	/** set the weight via objects 
+	 * @param v1 the first vertex object
+	 * @param v2 the 2nd vertex object
+	 * @param wghtIdx the weight of the edge */
+	public void setWeight(Vertex280 v1, Vertex280 v2, double wghtIdx){
+		this.eSearch(v1, v2);
+		this.eItem().setWeight(wghtIdx);
+	}
+	
+	/**  get the weight via objects
+	 * @param v1 the  first vertex object
+	 * @param v2 the 2nd vertex object
+	 * @return the weight of the edge*/
+	public Double getWeight(Vertex280 v1, Vertex280 v2){
+		this.eSearch(v1, v2);
+		return this.eItem().getWeight();
 	}
 	
 
@@ -141,7 +182,7 @@ public class WeightedGraphAdjListRep280<V> extends GraphAdjListRep280<Vertex280,
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		WeightedGraphAdjListRep280<Vertex280> G = new WeightedGraphAdjListRep280<Vertex280>(10, false, "lib280.graph.Vertex280", "lib280.graph.WeightedEdge280");
+		WeightedGraphAdjListRep280<Vertex280> G = new WeightedGraphAdjListRep280<Vertex280>(10, true, "lib280.graph.Vertex280", "lib280.graph.WeightedEdge280");
 
 		G.initGraphFromFile("src/lib280/graph/weightedtestgraph.gra");
 		System.out.println(G.toString());
