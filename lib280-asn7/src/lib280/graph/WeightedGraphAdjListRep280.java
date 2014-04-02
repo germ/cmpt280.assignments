@@ -35,7 +35,7 @@ public class WeightedGraphAdjListRep280<V extends Vertex280> extends GraphAdjLis
 	 *             if the file format is incorrect, or an edge appears more than
 	 *             once in the input.
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "resource" })
 	public void initGraphFromFile(String fileName) {
 
 		// Erase the current graph.

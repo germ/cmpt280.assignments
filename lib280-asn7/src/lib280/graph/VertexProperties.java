@@ -9,14 +9,14 @@ public class VertexProperties implements Comparable<VertexProperties> {
 	}
 
 	/** the index of the vertex that we are storing information about */
-	protected Vertex280 vertex;
+	protected int vertex;
 	
 	/** the index of the parent of this vertex in the spanning tree */
 	protected int parent;
 	
 	/** the cost of the cheapest edge between this vertex and
 	 *  a vertex that is already in the spanning tree */
-	protected int minDistance;
+	protected float minDistance;
 	
 	/** a boolean variable heaped to denote whether
 	 *  this VertexProperties object is still in
@@ -25,6 +25,6 @@ public class VertexProperties implements Comparable<VertexProperties> {
 
 	@Override
 	public int compareTo(VertexProperties o) {
-		return Integer.compare(minDistance, o.minDistance);
+		return Float.compare(minDistance, o.minDistance);
 	}
 }

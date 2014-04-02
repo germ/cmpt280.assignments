@@ -2,7 +2,7 @@ package lib280.graph;
 
 import lib280.tree.ArrayedMinHeap280;
 
-public class MinSpanningTreePrim implements Comparable<VertexProperties> {
+public class MinSpanningTreePrim  {
 	
 	/** A Large global */
 	private final int INFINITY = 1000000;
@@ -30,21 +30,19 @@ public class MinSpanningTreePrim implements Comparable<VertexProperties> {
 	}
 	
 	WeightedGraphAdjListRep280<Vertex280> PrimSuggested(WeightedGraphAdjListRep280<Vertex280> G){
-		VertexProperties fuckthis = new VertexProperties();
-		fuckthis.heaped = true;
 		VertexProperties[] vertexArray;
-		vertexArray = new VertexProperties[G.capacity()];
-		//System.out.println(G.capacity());
+		vertexArray = new VertexProperties[G.capacity()+1];
 		for (int i = 0; i<G.capacity();i++){
 			vertexArray[i] = new VertexProperties(); 
+			vertexArray[i].vertex = i;
 			vertexArray[i].heaped = true;
 			vertexArray[i].minDistance = INFINITY;
 			vertexArray[i].parent = -1;
 		}
 		vertexArray[0].minDistance = 0;
 		
-		for (int i = 0; i<G.capacity();i++){
-			this.H.insert(vertexArray[i]); // wtf why wont this insert
+		for (int i = 1; i<G.capacity();i++){
+			this.H.insert(vertexArray[i]); 
 		}
 		
 		WeightedGraphAdjListRep280<Vertex280> MinG = new WeightedGraphAdjListRep280<Vertex280>(G.capacity(), false);
@@ -54,26 +52,21 @@ public class MinSpanningTreePrim implements Comparable<VertexProperties> {
 			h.heaped = false;
 			// add edge (h.vertex, h.parent) to MinG
 			if (h.parent  >= 1){
-				MinG.addEdge(h.vertex, G.vertex(h.parent));
+				MinG.addEdge(G.vertex(h.vertex), G.vertex(h.parent));
 			}
-			// TODO is this right? // For each node v of G adjacent to h.vertex // check adjacent nodes fdsigiusdfg im goign to b ed
-			for (G.eGoFirst(G.vertexArray[h.vertex.index()]); !G.eAfter();G.eGoForth()){
+			for (G.eGoFirst(G.vertex(h.vertex)); G.eItemExists();G.eGoForth()){
 				int v = G.eItem().secondItem().index();
-				if (vertexArray[v].heaped == true &&  G.getEdgeWeight(h.vertex, G.vertex(v)) < vertexArray[v].minDistance){
-					vertexArray[v].parent = h.vertex.index();
-					vertexArray[v].minDistance = (int) G.getEdgeWeight(h.vertex, G.vertex(v));
-					H.siftUp(vertexArray[v]); // TODO unsure if I have this part right.
+				if (vertexArray[v].heaped == true &&  G.getEdgeWeight(G.vertex(h.vertex), G.vertex(v)) < vertexArray[v].minDistance){
+					vertexArray[v].parent = h.vertex;
+					vertexArray[v].minDistance = (int) G.getEdgeWeight(G.vertex(h.vertex), G.vertex(v));
+					H.siftUp(vertexArray[v]); 
 				}
 			}
 		}
+		//System.out.println(MinG.toString());
 		return MinG;
 	}
 	
-	@Override
-	public int compareTo(VertexProperties arg0) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 	
 	
 	public static void main(String args[]) {
