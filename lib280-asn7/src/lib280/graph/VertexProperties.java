@@ -16,7 +16,7 @@ public class VertexProperties implements Comparable<VertexProperties> {
 	
 	/** the cost of the cheapest edge between this vertex and
 	 *  a vertex that is already in the spanning tree */
-	protected float minDistance;
+	protected Double minDistance;
 	
 	/** a boolean variable heaped to denote whether
 	 *  this VertexProperties object is still in
@@ -25,6 +25,6 @@ public class VertexProperties implements Comparable<VertexProperties> {
 
 	@Override
 	public int compareTo(VertexProperties o) {
-		return Float.compare(minDistance, o.minDistance);
+		return Double.compare(minDistance, o.minDistance);
 	}
 }
